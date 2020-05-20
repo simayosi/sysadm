@@ -100,15 +100,14 @@ bc
   （メモリ量が少ないとメモリ上にイメージが展開できず失敗するので注意）
 ```Shell
 virt-install \
-  --name=test-centos7 \
-  --ram=4096 --vcpus=1 \
-  --location=http://<centos_base>/7/os/x86_64/ \
-  --os-type=linux \
-  --os-variant=centos7.0 \
+  --name test-centos7 \
+  --memory 4096 --vcpus 1 \
+  --location http://<centos_base>/7/os/x86_64/ \
+  --os-variant centos7.0 \
   --disk path=system.img,size=10,format=qcow2 \
   --network bridge=br0 \
   --graphics none \
-  --serial pty --console=pty \
+  --serial pty --console pty \
   --initrd-inject ks.cfg \
   --extra-args "inst.ks=file:/ks.cfg console=ttyS0"
 ```
@@ -137,41 +136,8 @@ virsh shutdown test-centos7
 virsh destroy test-centos7
 ```
 
-
-## スナップショットの取得・復元
-スナップショットを利用すればVMを以前の状態に復元できる。
-
-### スナップショット取得
-`snapshot-1`という名前を付けてスナップショットを取得
-```Shell
-virsh snapshot-create-as test-centos7 --name snapshot-1
-```
-
-### スナップショット一覧
-```Shell
-virsh snapshot-list test-centos7
-```
-
-### スナップショット復元
-直前のスナップショットに復元
-```Shell
-virsh snapshot-revert test-centos7 --current
-```
-
-スナップショット名`snapshot-1`を指定して復元
-```Shell
-virsh snapshot-revert test-centos7 --snapshotname snapshot-1
-```
-
-### スナップショット削除
-スナップショット`snapshot-1`を削除
-```Shell
-virsh snapshot-delete test-centos7 --snapshotname snapshot-1
-```
-
 ## VMの削除
 不要になったVMを削除  
-削除前に全スナップショットを削除しておく必要がある。
 ```Shell
 virsh undefine test-centos7
 ```
